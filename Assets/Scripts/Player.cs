@@ -105,7 +105,7 @@ public class Player : MonoBehaviour
     private void MoveTo()
     {
         SelectedPawn.IsMoving = true;
-        SelectedPawn.transform.position = Vector3.MoveTowards(SelectedPawn.transform.position, SelectedCell.Transform.position, 10f);
+        SelectedPawn.transform.position = Vector3.MoveTowards(SelectedPawn.transform.position, SelectedCell.Transform.position, 15f);
         SelectedPawn.transform.SetAsLastSibling();
         if (SelectedPawn.transform.position == SelectedCell.Transform.position)
         {
@@ -124,46 +124,51 @@ public class Player : MonoBehaviour
     /// <param name="pawn"></param>
     public static void SelectPawn(Pawn pawn)
     {
-        SelectedCell = null;
-        foreach (var cell in Cells)
-        {
-            cell.CanMove = false;
-            Image image = cell.GetComponentInChildren<Image>();
-            var tempColor = image.color;
-            tempColor.a = 0f;
-            image.color = tempColor;
-        }
+        if (previousPawn == null) previousPawn = pawn;
 
-        if (IsWhite)
+        if (!previousPawn.IsMoving)
         {
-            if (pawn.pawnColor == Pawn.PawnColor.white)
+            SelectedCell = null;
+            foreach (var cell in Cells)
             {
-                if (previousPawn != null)
-                {
-                    previousPawn.Animator.Rebind();
-                    previousPawn.Animator.Update(0f);
-                    previousPawn.Animator.enabled = false;
-                };
-                pawn.Animator.enabled = !pawn.Animator.enabled;
-
-                SelectedPawn = pawn;
-                previousPawn = pawn;
+                cell.CanMove = false;
+                Image image = cell.GetComponentInChildren<Image>();
+                var tempColor = image.color;
+                tempColor.a = 0f;
+                image.color = tempColor;
             }
-        }
-        else
-        {
-            if (pawn.pawnColor == Pawn.PawnColor.black)
-            {
-                if (previousPawn != null)
-                {
-                    previousPawn.Animator.Rebind();
-                    previousPawn.Animator.Update(0f);
-                    previousPawn.Animator.enabled = false;
-                };
-                pawn.Animator.enabled = !pawn.Animator.enabled;
 
-                SelectedPawn = pawn;
-                previousPawn = pawn;
+            if (IsWhite)
+            {
+                if (pawn.pawnColor == Pawn.PawnColor.white)
+                {
+                    if (previousPawn != null)
+                    {
+                        previousPawn.Animator.Rebind();
+                        previousPawn.Animator.Update(0f);
+                        previousPawn.Animator.enabled = false;
+                    };
+                    pawn.Animator.enabled = !pawn.Animator.enabled;
+
+                    SelectedPawn = pawn;
+                    previousPawn = pawn;
+                }
+            }
+            else
+            {
+                if (pawn.pawnColor == Pawn.PawnColor.black)
+                {
+                    if (previousPawn != null)
+                    {
+                        previousPawn.Animator.Rebind();
+                        previousPawn.Animator.Update(0f);
+                        previousPawn.Animator.enabled = false;
+                    };
+                    pawn.Animator.enabled = !pawn.Animator.enabled;
+
+                    SelectedPawn = pawn;
+                    previousPawn = pawn;
+                }
             }
         }
     }
